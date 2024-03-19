@@ -10,31 +10,36 @@ from urllib.parse import parse_qsl, urlparse
 
 
 class WebRequestHandler(BaseHTTPRequestHandler):
+    # Propiedad para obtener la URL parseada
     @cached_property
     def url(self):
         return urlparse(self.path)
 
+    # Propiedad para obtener los datos de la consulta (query)
     @cached_property
     def query_data(self):
         return dict(parse_qsl(self.url.query))
 
+    # Propiedad para obtener los datos enviados por POST
     @cached_property
     def post_data(self):
         content_length = int(self.headers.get("Content-Length", 0))
         return self.rfile.read(content_length)
 
+    # Propiedad para obtener los datos del formulario
     @cached_property
     def form_data(self):
         return dict(parse_qsl(self.post_data.decode("utf-8")))
 
+    # Propiedad para obtener las cookies
     @cached_property
     def cookies(self):
         return SimpleCookie(self.headers.get("Cookie"))
 
+    # Maneja las solicitudes GET
     def do_GET(self):
-        # Este código no va aquí, es mejor
-        # sacarlo a su propio método.
-        # Es solo un ejemplo.
+        # Este código debería ir en un método separado,
+        # aquí está como ejemplo solamente.
         c = self.cookies
         if not c:
             print("No cookie")
@@ -53,9 +58,11 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(self.get_response().encode("utf-8"))
 
+    # Maneja las solicitudes POST
     def do_POST(self):
         self.do_GET()
 
+    # Genera la respuesta HTML
     def get_response(self):
         return f"""
     <h1> Hola Web </h1>
